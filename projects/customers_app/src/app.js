@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const Customer = require("./models/customers");
 
 const app = express();
 
@@ -13,25 +14,24 @@ if (process.env.NODE_ENV !== "production") {
 
 const PORT = process.env.PORT || 3000;
 const CONNECTION = process.env.CONNECTION;
-console.log(typeof PORT);
-const customers = [
-  { name: "John", industry: "music" },
-  { name: "Bob", industry: "networking" },
-  { name: "Peter", industry: "sports" },
-];
 
 app.get("/", (req, res) => {
-  res.send("Welcome to homepage");
+  res.send("Welcome to home page");
 });
 
-app.get("/api/customers", (req, res) => {
-  res.send({ customers: customers });
+app.get("/api/customers", async (req, res) => {
+  try {
+    const customersList = await Customer.find();
+    res.send({ customers: customersList });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.post("/api/customers", (req, res) => {
-  const newCustomer = req.body;
-  customers.push(newCustomer);
-  res.send({ customers: customers });
+  const customer = new Customer(req.body);
+  customer.save();
+  res.status(201).json({ customer });
 });
 
 const start = async () => {
@@ -41,8 +41,8 @@ const start = async () => {
     app.listen(PORT, () => {
       console.log(`Server is started on port http://localhost:${PORT}`);
     });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err.message);
   }
 };
 
