@@ -1,7 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const Customer = require("./models/customers");
-const cors = require("cors");
+import express, { Request, Response } from "express";
+import cors from "cors";
+import mongoose, { HydratedDocument } from "mongoose";
+import { ICustomer } from "./models/customer_types";
+import Customer from "./models/customers";
+import { getEnvVariable } from "./utils/env_utils";
 
 const app = express();
 
@@ -10,27 +12,27 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+const developmentMode = process.env.NODE_ENV !== "production";
 
-const PORT = process.env.PORT || 3000;
-const CONNECTION = process.env.CONNECTION;
+if (developmentMode) require("dotenv").config();
 
-app.get("/", (req, res) => {
+const PORT: string | number = getEnvVariable("PORT") || 3000;
+const CONNECTION: string = getEnvVariable("CONNECTION");
+
+app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to home page");
 });
 
-app.get("/api/customers", async (req, res) => {
+app.get("/api/customers", async (req: Request, res: Response) => {
   try {
     const customersList = await Customer.find();
-    res.send({ customers: customersList });
+    res.json({ customers: customersList });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.get("/api/customers/:id", async (req, res) => {
+app.get("/api/customers/:id", async (req: Request, res: Response) => {
   try {
     const { id: customerId } = req.params;
     const customer = await Customer.findById(customerId);
@@ -44,7 +46,7 @@ app.get("/api/customers/:id", async (req, res) => {
   }
 });
 
-app.put("/api/customers/:id", async (req, res) => {
+app.put("/api/customers/:id", async (req: Request, res: Response) => {
   try {
     const { id: customerId } = req.params;
     const customer = await Customer.findOneAndReplace(
@@ -60,7 +62,7 @@ app.put("/api/customers/:id", async (req, res) => {
   }
 });
 
-app.patch("/api/customers/:id", async (req, res) => {
+app.patch("/api/customers/:id", async (req: Request, res: Response) => {
   try {
     const { id: customerId } = req.params;
     const customer = await Customer.findOneAndUpdate(
@@ -74,7 +76,7 @@ app.patch("/api/customers/:id", async (req, res) => {
   }
 });
 
-app.patch("/api/orders/:id", async (req, res) => {
+app.patch("/api/orders/:id", async (req: Request, res: Response) => {
   try {
     const { id: orderId } = req.params;
     req.body._id = orderId;
@@ -86,14 +88,29 @@ app.patch("/api/orders/:id", async (req, res) => {
     if (result) {
       res.json(result);
     } else {
-      res.status(404).json({ error: "Something went wrong" });
+      res.status(404).json({ error: "Order not found" });
     }
   } catch (err) {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
 
-app.delete("/api/customers/:id", async (req, res) => {
+app.get("/api/orders/:id", async (req: Request, res: Response) => {
+  try {
+    const { id: orderId } = req.params;
+    req.body._id = orderId;
+    const result = await Customer.findOne({ "orders.id": orderId });
+    if (result) {
+      res.json(result);
+    } else {
+      res.status(404).json({ error: "Order not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+app.delete("/api/customers/:id", async (req: Request, res: Response) => {
   try {
     const { id: customerId } = req.params;
     const result = await Customer.deleteOne({ _id: customerId });
@@ -103,8 +120,8 @@ app.delete("/api/customers/:id", async (req, res) => {
   }
 });
 
-app.post("/api/customers", async (req, res) => {
-  const customer = new Customer(req.body);
+app.post("/api/customers", async (req: Request, res: Response) => {
+  const customer: HydratedDocument<ICustomer> = new Customer(req.body);
   try {
     await customer.save();
     res.status(201).json({ customer });
