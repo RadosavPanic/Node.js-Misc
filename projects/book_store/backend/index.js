@@ -7,6 +7,7 @@ import cors from "cors";
 if (process.env.NODE_ENV !== "production") dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3005;
 
 app.use(express.json());
 app.use(cors());
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
 async function init() {
   try {
     await mongoose.connect(process.env.DB_CONNECTION);
-    app.listen(process.env.PORT || 3005);
+    app.listen(PORT, () => console.log(`App running on port ${PORT}`));
   } catch (err) {
     console.log(err.message);
   }
