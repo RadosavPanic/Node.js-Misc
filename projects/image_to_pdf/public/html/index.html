@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="author" content="Radosav Panic" />
+    <meta
+      name="description"
+      content="Easily convert any set of images to pdf"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../stylesheets/style.css" />
+    <link rel="stylesheet" href="../stylesheets/index.css" />
+    <title>Image To PDF Converter</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1><a href="/">IMG2PDF</a></h1>
+      </header>
+
+      <article>
+        <p class="title">Easily convert your PNG and JPG images</p>
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+          <input
+            id="file-upload"
+            type="file"
+            name="images"
+            accept=".png, .jpg"
+            multiple
+          />
+          <p><label for="file-upload">Select files</label></p>
+          <p id="selected-files"><code> </code></p>
+          <p><input type="submit" value="Upload" /></p>
+        </form>
+      </article>
+
+      <footer>
+        <p>
+          <code>copyright &copy; Radosav Panic</code>
+        </p>
+      </footer>
+
+      <script>
+        let fileUpload = document.getElementById("file-upload");
+        let selectedFiles = document.querySelector("#selected-files code");
+        let btnSubmit = document.querySelector("input[type=submit]");
+
+        fileUpload.addEventListener("change", function () {
+          selectedFiles.parentElement.style.display = "none";
+          btnSubmit.style.display = "none";
+
+          const filenames = Array.from(this.files)
+            .map((file) => file.name)
+            .join(", ");
+
+          selectedFiles.parentElement.style.display = "block";
+          selectedFiles.textContent = "Loading your files...";
+
+          setTimeout(() => {
+            selectedFiles.textContent = `Files selected: ${filenames}`;
+            btnSubmit.style.display = "inline-block";
+          }, 2000);
+        });
+      </script>
+    </main>
+  </body>
+</html>
