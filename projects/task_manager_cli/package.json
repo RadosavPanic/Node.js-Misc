@@ -6,7 +6,7 @@
   "exports": "./index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Radosav Panic",
@@ -19,5 +19,8 @@
     "mongoose": "^8.5.4",
     "nanoid": "^5.0.7",
     "ora": "^8.1.0"
+  },
+  "bin": {
+    "todo": "index.js"
   }
 }
