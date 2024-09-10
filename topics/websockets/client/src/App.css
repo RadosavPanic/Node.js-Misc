@@ -1,0 +1,52 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.input-field {
+  height: 2rem;
+  padding-left: 0.5rem;
+  outline: none;
+  width: 20rem;
+  margin: 0.3rem;
+}
+
+.send-scores {
+  margin-top: 1rem;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: left;
+}
+
+/* Table caption styling */
+caption {
+  caption-side: left;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+th {
+  background-color: #4caf50;
+}
+
+th,
+td {
+  padding: 12px 15px;
+  color: white;
+}
+
+table,
+th,
+td {
+  border: 1px solid #ddd;
+}
